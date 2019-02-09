@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Building Graphics in R</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Mary Ryan" />
+    <link href="libs/remark-css-0.0.1/default.css" rel="stylesheet" />
+    <link href="libs/remark-css-0.0.1/lucy-fonts.css" rel="stylesheet" />
+    <link rel="stylesheet" href="headerColor.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+layout: true
+class: 
+
+&lt;!-- footer --&gt;
+ &lt;div style="position:fixed; bottom:4px; left:4px; font-size: 12pt; color: #00A895; background-color: #383838; width:90%"&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;Mary Ryan&lt;/div&gt; &lt;!--&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; --&gt;
+&lt;div style="position:fixed; bottom:4px; left:350px; font-size: 12pt; color: #00A895"&gt;Building Graphics in R&lt;/div&gt; &lt;!--&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; --&gt;
+&lt;div style="position:fixed; bottom:4px; right:92px; font-size: 12pt; color: #00A895"&gt;NICAR 2019&lt;/div&gt;
+
+---
+
+class: title-slide2
+
+# &lt;center&gt; Building Graphics in R &lt;/center&gt;
+## &lt;center&gt; Presented at NICAR 2019 &lt;/center&gt;
+### &lt;center&gt; Mary Ryan &lt;/center&gt;
+
+&lt;!-- social media info --&gt;
+&lt;div style="position:fixed; bottom:40px; left:70px;"&gt;
+&lt;div&gt;&lt;img src="libs/Twitter-Social-Icons/Twitter_SocialIcon_Circle/Twitter_Social_Icon_Circle_Color.png" width="40"/&gt; &lt;a href="https://twitter.com/Marym_Ryan"&gt; @Marym_Ryan &lt;/a&gt;&lt;/div&gt;
+&lt;div&gt;&lt;img src="libs/GitHub-Mark/PNG/GitHub-Mark-120px-plus.png" width="40"/&gt; &lt;a href="https://github.com/maryryan"&gt; github.com/maryryan &lt;/a&gt; &lt;/div&gt;
+&lt;div&gt;&lt;img src="https://svgsilh.com/svg/1873373.svg" width="35"/&gt;&lt;a href="https://www.ics.uci.edu/~marymr/"&gt; www.ics.uci.edu/~marymr &lt;/a&gt;&lt;/div&gt;
+&lt;/div&gt;
+
+---
+
+# To each their own
+
+.pull-left[
+**Base R**
+
+- Comes with R or RStudio
+
+- Syntax relatively intuitive
+
+- More work to make super pretty
+
+- Good for getting rough sketch
+]
+
+.pull-right[
+**ggplot**
+
+- From the `tidyverse` package
+
+- Learning curve to syntax
+
+- Makes pretty plots by default
+
+- Good for presenting data to others
+]
+
+---
+
+# The Agenda
+
+- Plots
+      - Scatter plots
+      - Line plots
+      - Bar charts
+      - Boxplots
+      
+- Labeling
+      - Titles and axes
+      - Legends
+      - Adding text
+      
+- Cosmetics
+      - Specifying colors, line patterns, dot symbolx
+      - Multiple plots per window
+      
+---
+
+# Scatter plots: base R
+
+- Most basic plot
+
+- Data points scattered across plot
+
+- Shows relationship between two variables
+
+--
+
+- `plot()` is the function we use to create a plot
+
+- x-axis variable goes first, then the y-axis variable
+
+--
+
+
+```r
+plot( avocado$`Total Volume`, avocado$AveragePrice )
+```
+
+---
+
+# Scatter plots: base R
+
+
+```r
+plot( avocado$`Total Volume`, avocado$AveragePrice )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/scatter plot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Scatter plots: ggplot2
+
+- In ggplot2, `ggplot()` acts as the call that we want to graph
+
+- `aes()` within `ggplot()` tells the plot the aesthetics -- here, what data to plot
+
+- adding `geom_SOMETHING()` at the end tells ggplot what type of plot to make
+
+- `+ geom_point()` gets us a scatter (point) plot
+
+--
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(`Total Volume`, AveragePrice) ) +
+*  geom_point()
+```
+
+---
+
+# Scatter plots: ggplot2
+
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(`Total Volume`, AveragePrice) ) +
+*  geom_point()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/scatter ggplot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Line plots: base R
+
+---
+
+# Line plots: ggplot2
+
+- `+ geom_line()` gets us a line plot
+
+--
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(Date, AveragePrice) ) +
+*  geom_line()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line ggplot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Line plots: ggplot2
+
+- We can make different lines by region if we `filter()` the data before before sending it to `ggplot()`
+
+
+```r
+avocado %&gt;% 
+*  filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;%
+   ggplot( aes(Date, AveragePrice) ) +
+   geom_line()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line ggplot region-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Line plots: ggplot2
+
+- It was a little hard to tell the difference between regions on that one, so we can also give the lines different colors by using the `color` argument within `aes()`
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(Date, AveragePrice,
+*              color=factor(region))
+           ) + geom_line()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line ggplot region color-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Barcharts: ggplot2
+
+- `+ geom_bar()` will get you a barchart
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(type, `Total Bags` ) ) +
+   geom_bar( position='dodge', stat='identity' )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/barchart ggplot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Barcharts: ggplot2
+
+- We can also do side-by-side barcharts
+
+- need to specify `col=` argument in the `ggplot` `aes()`, as well as the `fill=` argument in the `geom_bar` `aes()`
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, `Total Bags`,
+*              col=factor(region) ) ) +
+*  geom_bar( position='dodge',
+             stat='identity',
+*            aes( fill=factor(region) ) )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/bar ggplot region-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Barcharts: ggplot2
+
+- We can also do stacked barcharts
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
+*  geom_bar( stat='identity',
+             aes( fill=factor(region) ) )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/bar ggplot stack-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Boxplots: ggplot2
+
+- Whew! So much less work!
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, AveragePrice, col=factor(region) ) ) + geom_boxplot()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/boxplot ggplot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

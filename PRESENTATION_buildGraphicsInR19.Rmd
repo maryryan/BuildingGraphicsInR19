@@ -1,0 +1,336 @@
+---
+title: "Building Graphics in R"
+subtitle: "Presented at NICAR 2019"
+author: "Mary Ryan"
+date: "March 7-10"
+institute: "University of California, Irvine"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: ["default", "lucy-fonts", "headerColor.css"]#like lucy
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+    seal: false
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(cache=TRUE)
+knitr::opts_chunk$set(fig.align='center', out.width="55%", warning=FALSE)
+```
+
+```{r load libraries, include=FALSE, comment='#'}
+#install.packages( 'tidyverse' )
+#install.packages( 'readxl' )
+
+library( tidyverse, quietly=T, warn.conflicts = F )
+library( readxl, quietly=T, warn.conflicts = F )
+
+```
+
+```{r load data, include=F}
+
+avocado <- read_excel( "avocado.xlsx" )
+
+```
+
+layout: true
+class: 
+
+<!-- footer -->
+ <div style="position:fixed; bottom:4px; left:4px; font-size: 12pt; color: #00A895; background-color: #383838; width:90%">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Mary Ryan</div> <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+<div style="position:fixed; bottom:4px; left:350px; font-size: 12pt; color: #00A895">Building Graphics in R</div> <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+<div style="position:fixed; bottom:4px; right:92px; font-size: 12pt; color: #00A895">NICAR 2019</div>
+
+---
+
+class: title-slide2
+
+# <center> Building Graphics in R </center>
+## <center> Presented at NICAR 2019 </center>
+### <center> Mary Ryan </center>
+
+<!-- social media info -->
+<div style="position:fixed; bottom:40px; left:70px;">
+<div><img src="libs/Twitter-Social-Icons/Twitter_SocialIcon_Circle/Twitter_Social_Icon_Circle_Color.png" width="40"/> <a href="https://twitter.com/Marym_Ryan"> @Marym_Ryan </a></div>
+<div><img src="libs/GitHub-Mark/PNG/GitHub-Mark-120px-plus.png" width="40"/> <a href="https://github.com/maryryan"> github.com/maryryan </a> </div>
+<div><img src="https://svgsilh.com/svg/1873373.svg" width="35"/><a href="https://www.ics.uci.edu/~marymr/"> www.ics.uci.edu/~marymr </a></div>
+</div>
+
+---
+
+# To each their own
+
+.pull-left[
+**Base R**
+
+- Comes with R or RStudio
+
+- Syntax relatively intuitive
+
+- More work to make super pretty
+
+- Good for getting rough sketch
+]
+
+.pull-right[
+**ggplot**
+
+- From the `tidyverse` package
+
+- Learning curve to syntax
+
+- Makes pretty plots by default
+
+- Good for presenting data to others
+]
+
+---
+
+# The Agenda
+
+- Plots
+      - Scatter plots
+      - Line plots
+      - Bar charts
+      - Boxplots
+      
+- Labeling
+      - Titles and axes
+      - Legends
+      - Adding text
+      
+- Cosmetics
+      - Specifying colors, line patterns, dot symbolx
+      - Multiple plots per window
+      
+---
+
+# Scatter plots: base R
+
+- Most basic plot
+
+- Data points scattered across plot
+
+- Shows relationship between two variables
+
+--
+
+- `plot()` is the function we use to create a plot
+
+- x-axis variable goes first, then the y-axis variable
+
+--
+
+```{r scatter plot code, eval=FALSE}
+plot( avocado$`Total Volume`, avocado$AveragePrice )
+```
+
+---
+
+# Scatter plots: base R
+
+```{r scatter plot}
+plot( avocado$`Total Volume`, avocado$AveragePrice )
+```
+
+---
+
+# Scatter plots: ggplot2
+
+- In ggplot2, `ggplot()` acts as the call that we want to graph
+
+- `aes()` within `ggplot()` tells the plot the aesthetics -- here, what data to plot
+
+- adding `geom_SOMETHING()` at the end tells ggplot what type of plot to make
+
+- `+ geom_point()` gets us a scatter (point) plot
+
+--
+
+```{r scatter ggplot code, eval=FALSE}
+avocado %>% 
+   ggplot( aes(`Total Volume`, AveragePrice) ) +
+   geom_point()#<<
+```
+
+---
+
+# Scatter plots: ggplot2
+
+
+```{r scatter ggplot}
+avocado %>% 
+   ggplot( aes(`Total Volume`, AveragePrice) ) +
+   geom_point() #<<
+```
+
+---
+
+# Line plots: Base R
+
+---
+
+# Legends: Base R
+
+- Sometimes you would like to add a legend to your plot
+
+- `legend()` is the function we use, in conjunction with a `plot()` function
+
+- What you need:
+      - location: can be the coordinates where you want the box to appear or phrases like "topleft" or "bottomright"
+      - lables: what sort of text do you want appearing in the legend?
+      - par: these are things like `lty`, or `pch` that tells R what line pattern or dot symbol (respectively) you want to appear
+      - colors: what kind of colors do you want your lines/symbols to be? 
+
+
+---
+
+# Line plots: ggplot2
+
+- `+ geom_line()` gets us a line plot
+
+--
+
+```{r line ggplot, fig.height=6}
+avocado %>% 
+   ggplot( aes(Date, AveragePrice) ) +
+   geom_line() #<<
+
+```
+
+---
+
+# Line plots: ggplot2
+
+- We can make different lines by region if we `filter()` the data before before sending it to `ggplot()`
+
+```{r line ggplot region, fig.height=5}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% #<<
+   ggplot( aes(Date, AveragePrice) ) +
+   geom_line()
+
+```
+
+---
+
+# Line plots: ggplot2
+
+- It was a little hard to tell the difference between regions on that one, so we can also give the lines different colors by using the `color` argument within `aes()`
+
+```{r line ggplot region color, fig.height=4}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(Date, AveragePrice,
+               color=factor(region)) #<<
+           ) + geom_line()
+
+```
+
+--
+
+- Look! `ggplot` gives us a legend without us having to ask for it!
+---
+
+# Barcharts: ggplot2
+
+- `+ geom_bar()` will get you a barchart
+
+```{r barchart ggplot, fig.height=5}
+avocado %>% 
+   ggplot( aes(type, `Total Bags` ) ) +
+   geom_bar( position='dodge', stat='identity' )
+```
+
+---
+
+# Barcharts: ggplot2
+
+- We can also do side-by-side barcharts
+
+- need to specify `col=` argument in the `ggplot` `aes()`, as well as the `fill=` argument in the `geom_bar` `aes()`
+
+```{r bar ggplot region, fig.height=4}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, `Total Bags`,
+               col=factor(region) ) ) + #<<
+   geom_bar( position='dodge',#<<
+             stat='identity',
+             aes( fill=factor(region) ) ) #<<
+```
+
+---
+
+# Barcharts: ggplot2
+
+- We can also do stacked barcharts
+
+```{r bar ggplot stack, fig.height=5}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
+   geom_bar( stat='identity', #<<
+             aes( fill=factor(region) ) )
+```
+
+---
+
+# Boxplots: Base R
+
+- We use the function `boxplot()` to do our plotting
+
+- Overall boxplot pretty easy in base R, but has a different syntax than we've had before
+      - y axis variable first, tilde, then x axis variable
+      
+```{r boxplot}
+boxplot( AveragePrice ~ type, data=avocado )
+
+```
+
+---
+
+# Boxplots: Base R
+
+- But if we want to do multiple regions per type...
+
+```{r boxplot regions}
+# Set up boxplot domain #
+boxplot(unlist(avocado[which(avocado$region %in% c("TotalUS", "LosAngeles", "SanDiego")),"AveragePrice"])~unlist(avocado[which(avocado$region %in% c("TotalUS", "LosAngeles", "SanDiego")),"type"]),
+        xlim = c(0.5, 2+0.5),
+        boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
+        ylab="Average Price")
+
+# Total US boxplots #
+boxplot(unlist(avocado[which(avocado$region=="TotalUS"), "AveragePrice"]) ~ unlist(avocado[which(avocado$region=="TotalUS"), "type"]),
+        xaxt="n", add=TRUE, boxfill="blue", boxwex=0.25)
+
+# LA boxplots #
+boxplot(unlist(avocado[which(avocado$region=="LosAngeles"), "AveragePrice"]) ~ unlist(avocado[which(avocado$region=="LosAngeles"), "type"]),
+        xaxt="n", add=TRUE, boxfill="red", boxwex=0.25, at=c(1,2) - 0.3)
+
+# San Diego boxplots #
+boxplot(unlist(avocado[which(avocado$region=="SanDiego"), "AveragePrice"]) ~ unlist(avocado[which(avocado$region=="SanDiego"), "type"]),
+        xaxt="n", add=TRUE, boxfill="green", boxwex=0.25, at=c(1,2) + 0.3)
+
+# legend #
+legend("topleft", c("Total US", "Los Angeles", "San Diego"),
+       lty=1,lwd=5, bty="n",col=c("blue", "red", "green"),
+       cex=0.7 )
+```
+
+---
+
+# Boxplots: ggplot2
+
+- Whew! So much less work!
+
+```{r boxplot ggplot, fig.height=5}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, AveragePrice, col=factor(region) ) ) + geom_boxplot()
+
+```

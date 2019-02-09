@@ -1,0 +1,4 @@
+"0","avocado %>% "
+"0","   filter( region %in% c(""TotalUS"", ""LosAngeles"", ""SanDiego"") ) %>% "
+"0","   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +"
+"0","   geom_bar( position='dodge', stat='identity', aes( fill=factor(region) ) )"

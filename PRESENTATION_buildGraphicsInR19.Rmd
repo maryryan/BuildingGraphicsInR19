@@ -12,13 +12,14 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
+      slideNumberFormat: "%current%"
     seal: false
 ---
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_chunk$set(cache=TRUE)
-knitr::opts_chunk$set(fig.align='center', out.width="55%", warning=FALSE)
+knitr::opts_chunk$set(fig.align='center', out.width="53%", warning=FALSE)
 ```
 
 ```{r load libraries, include=FALSE, comment='#'}
@@ -26,8 +27,15 @@ knitr::opts_chunk$set(fig.align='center', out.width="55%", warning=FALSE)
 #install.packages( 'readxl' )
 
 library( tidyverse, quietly=T, warn.conflicts = F )
+library( knitr, quietly=T, warn.conflicts = F )
 library( readxl, quietly=T, warn.conflicts = F )
 
+```
+
+```{r reduce code spacing, include = FALSE}
+hook1 <- function(x){ gsub("```\n*```r*\n*", "", x) }
+hook2 <- function(x){ gsub("```\n+```\n", "", x) }
+knit_hooks$set(document = hook2)
 ```
 
 ```{r load data, include=F}
@@ -108,7 +116,7 @@ class: title-slide2
       
 ---
 
-# Scatter plots: base R
+# Scatter plots: Base R
 
 - Most basic plot
 
@@ -122,20 +130,39 @@ class: title-slide2
 
 - x-axis variable goes first, then the y-axis variable
 
---
-
 ```{r scatter plot code, eval=FALSE}
 plot( avocado$`Total Volume`, avocado$AveragePrice )
 ```
 
 ---
 
-# Scatter plots: base R
+# Scatter plots: Base R
 
 ```{r scatter plot}
 plot( avocado$`Total Volume`, avocado$AveragePrice )
 ```
 
+---
+
+# Scatter plots & titles: Base R
+
+- We can add titles and change axis labels by using the `main=`, `xlab=`, and `ylab=` arugments
+
+```{r scatter plot titles code, eval=FALSE}
+plot( avocado$`Total Volume`, avocado$AveragePrice,
+      main="Avocados",#<<
+      xlab="Total Volume", ylab="Average Price ($)")#<<
+```
+
+---
+
+# Scatter plots & titles: Base R
+
+```{r scatter plot titles}
+plot( avocado$`Total Volume`, avocado$AveragePrice,
+      main="Avocados",#<<
+      xlab="Total Volume", ylab="Average Price ($)")#<<
+```
 ---
 
 # Scatter plots: ggplot2
@@ -148,8 +175,6 @@ plot( avocado$`Total Volume`, avocado$AveragePrice )
 
 - `+ geom_point()` gets us a scatter (point) plot
 
---
-
 ```{r scatter ggplot code, eval=FALSE}
 avocado %>% 
    ggplot( aes(`Total Volume`, AveragePrice) ) +
@@ -160,7 +185,6 @@ avocado %>%
 
 # Scatter plots: ggplot2
 
-
 ```{r scatter ggplot}
 avocado %>% 
    ggplot( aes(`Total Volume`, AveragePrice) ) +
@@ -169,168 +193,1102 @@ avocado %>%
 
 ---
 
-# Line plots: Base R
+# Scatter plots & titles: ggplot2
 
----
+- And we can rename our axes, or even add a main title, by adding `labs()`, `xlab()`, and `ylab()`
 
-# Legends: Base R
-
-- Sometimes you would like to add a legend to your plot
-
-- `legend()` is the function we use, in conjunction with a `plot()` function
-
-- What you need:
-      - location: can be the coordinates where you want the box to appear or phrases like "topleft" or "bottomright"
-      - lables: what sort of text do you want appearing in the legend?
-      - par: these are things like `lty`, or `pch` that tells R what line pattern or dot symbol (respectively) you want to appear
-      - colors: what kind of colors do you want your lines/symbols to be? 
-
-
----
-
-# Line plots: ggplot2
-
-- `+ geom_line()` gets us a line plot
-
---
-
-```{r line ggplot, fig.height=6}
+```{r scatter plot ggplot titles code, eval=FALSE}
 avocado %>% 
-   ggplot( aes(Date, AveragePrice) ) +
-   geom_line() #<<
+   ggplot( aes(`Total Volume`, AveragePrice) ) +
+   geom_point() + 
+   labs(title = "Avocados") +#<<
+   xlab("Total Volume") + ylab("Average Price ($)")#<<
 
 ```
 
 ---
 
-# Line plots: ggplot2
+# Scatter plots & titles: ggplot 2
 
-- We can make different lines by region if we `filter()` the data before before sending it to `ggplot()`
-
-```{r line ggplot region, fig.height=5}
+```{r scatter plot ggplot titles, out.width="45%"}
 avocado %>% 
-   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% #<<
-   ggplot( aes(Date, AveragePrice) ) +
+   ggplot( aes(`Total Volume`, AveragePrice) ) +
+   geom_point() + 
+   labs(title = "Avocados") +#<<
+   xlab("Total Volume") + ylab("Average Price ($)")#<<
+
+```
+---
+
+# Line graphs: Base R
+
+- There's actually a `type` argument in the `plot()` function that tells R what type of plot to make
+
+- The default for type is "p", which stands for "point""
+
+- To make a line plot, we need to set it to "l" for line
+
+```{r line graph code, eval=FALSE}
+
+plot( ChickWeight$Time, ChickWeight$weight,
+      type="l",#<<
+      xlab="Weight", ylab="Time")
+
+```
+
+---
+
+# Line graphs: Base R
+
+```{r line graph}
+
+plot( ChickWeight$Time, ChickWeight$weight,
+      type="l",#<<
+      xlab="Weight", ylab="Time")
+
+```
+
+---
+
+# Line graphs & new lines: Base R
+
+- To get different lines by chick, we plot one chick's data in the plot first, then we add more ines using the `lines()` function for the other chicks we want
+
+--
+
+```{r line graph chick code, eval=FALSE}
+
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l",
+     xlab="Weight", ylab="Time")
+lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],#<<
+      ChickWeight[which(ChickWeight$Chick==5),"weight"])#<<
+lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],#<<
+      ChickWeight[which(ChickWeight$Chick==27),"weight"])#<<
+
+```
+---
+
+# Line graphs & new lines: Base R
+
+```{r line graph chick, out.width="45%"}
+
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l",
+     xlab="Weight", ylab="Time")
+lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],#<<
+      ChickWeight[which(ChickWeight$Chick==5),"weight"])#<<
+lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],#<<
+      ChickWeight[which(ChickWeight$Chick==27),"weight"])#<<
+
+```
+
+---
+
+# Line graphs & colors: Base R
+
+- It's a little hard to tell the difference between the lines, so we can give each line its own color using the `col=` argument in both `plot()` and `lines()`
+
+```{r line graph chick col code, eval=F}
+
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l",
+     col="red",#<<
+     xlab="Weight", ylab="Time")
+lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],
+      ChickWeight[which(ChickWeight$Chick==5),"weight"],
+      col="blue")#<<
+lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],
+      ChickWeight[which(ChickWeight$Chick==27),"weight"],
+      col="green")#<<
+
+```
+---
+
+# Line graphs & colors: Base R
+
+```{r line graph chick col, echo=FALSE}
+
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l",
+     col="red",#<<
+     xlab="Weight", ylab="Time")
+lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],
+      ChickWeight[which(ChickWeight$Chick==5),"weight"],
+      col="blue")#<<
+lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],
+      ChickWeight[which(ChickWeight$Chick==27),"weight"],
+      col="green")#<<
+
+```
+---
+
+# Line graphs & legends: Base R
+
+- We can also add a legend to the plot for the reader to be able to tell which line color belongs to which chick. This is done using the `legend()` function after we've called the plot
+
+- What you need in the `legend()` function:
+      - location: can be the coordinates where you want the box to appear or phrases like "topleft" or "bottomright"
+      - legend: what sort of text do you want appearing in the legend?
+      - parameters: these are things like `lty`, `pch`, or `bty` that tells R what line pattern or  dot symbol you want to appear , or if you want a box (respectively)
+      - col: what kind of colors do you want your lines/symbols to be? 
+      
+```{r line graph legend code, eval=FALSE}
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l", col="red",
+     xlab="Weight", ylab="Time")
+lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],
+      ChickWeight[which(ChickWeight$Chick==5),"weight"], col="blue")
+lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],
+      ChickWeight[which(ChickWeight$Chick==27),"weight"], col="green")
+
+legend("topleft", legend = c("Chick 1", "Chick 5", "Chick 27"),#<<
+       lty=1, bty="n", col=c("red", "blue", "green") )#<<
+
+```
+---
+
+# Line graphs & legends: Base R
+
+```{r line graph legend, echo=FALSE}
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l", col="red",
+     xlab="Weight", ylab="Time")
+lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],
+      ChickWeight[which(ChickWeight$Chick==5),"weight"], col="blue")
+lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],
+      ChickWeight[which(ChickWeight$Chick==27),"weight"], col="green")
+
+legend("topleft", legend = c("Chick 1", "Chick 5", "Chick 27"),#<<
+       lty=1, bty="n", col=c("red", "blue", "green") )#<<
+
+```
+
+---
+
+# Line graphs: ggplot2
+
+- In ggplot, using `+ geom_line()` instead of `+ geom_point()` will get us a line graph 
+
+```{r line graph ggplot code, eval=FALSE}
+ChickWeight %>% 
+   ggplot( aes(Time, weight) ) +
+   geom_line()#<<
+```
+---
+
+# Line graphs: ggplot2
+
+```{r line graph ggplot, echo=FALSE}
+ChickWeight %>% 
+   ggplot( aes(Time, weight) ) +
+   geom_line()#<<
+```
+
+--
+
+- This looks way different than in base R! That's because ggplot is taking the average weight at each time point, while base R was connecting all the lines of all the chicks
+
+---
+
+# Line graphs & new lines: ggplot2
+
+- We can make different lines by chick if we `filter()` the data before before sending it to `ggplot()`, and grouping by the variable Chick
+
+```{r line graph ggplot chick code, eval=FALSE}
+
+ChickWeight %>% 
+   filter( Chick %in% c(1, 5, 27) ) %>% #<<
+   ggplot( aes(Time, weight,
+               group=factor(Chick)) ) +#<<
    geom_line()
 
 ```
 
 ---
 
-# Line plots: ggplot2
+# Line graphs & new lines: ggplot2
 
-- It was a little hard to tell the difference between regions on that one, so we can also give the lines different colors by using the `color` argument within `aes()`
+```{r line graph ggplot chick, out.width="50%"}
 
-```{r line ggplot region color, fig.height=4}
-avocado %>% 
-   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
-   ggplot( aes(Date, AveragePrice,
-               color=factor(region)) #<<
-           ) + geom_line()
+ChickWeight %>% 
+   filter( Chick %in% c(1, 5, 27) ) %>% #<<
+   ggplot( aes(Time, weight,
+               group=factor(Chick)) ) +#<<
+   geom_line()
+
+```
+---
+
+# Line graphs & colors: ggplot2
+
+- We can can give the lines different colors by using the `color` argument within `aes()` #
+
+```{r line graph ggplot col code, eval=FALSE}
+
+ChickWeight %>% 
+   filter( Chick %in% c(1, 5, 27) ) %>% 
+   ggplot( aes(Time, weight,
+               color=factor(Chick)) ) +#<<
+   geom_line()
+
+```
+---
+
+# Line graphs & colors: ggplot2
+
+```{r line graph ggplot col, out.width="50%"}
+
+ChickWeight %>% 
+   filter( Chick %in% c(1, 5, 27) ) %>% 
+   ggplot( aes(Time, weight,
+               color=factor(Chick)) ) +#<<
+   geom_line()
+
+```
+---
+
+# Line graphs & colors: ggplot2
+
+- If you want the chicks to be specific colors you can add `scale_color_manual()` along with setting color to the Chick variable in `geom_line()`
+
+```{r line graph ggplot specific col code, eval=FALSE}
+
+ChickWeight %>% 
+   filter( Chick %in% c(1, 5, 27) ) %>% 
+   ggplot( aes(Time, weight, group=factor(Chick)) ) +
+   geom_line( aes(color=factor(Chick)) ) +
+   scale_color_manual(values=c("red", "blue", "green"))#<<
+
+```
+---
+
+# Line graphs & colors: ggplot2
+
+```{r line graph ggplot specific col, out.width="50%"}
+
+ChickWeight %>% 
+   filter( Chick %in% c(1, 5, 27) ) %>% 
+   ggplot( aes(Time, weight, group=factor(Chick)) ) +
+   geom_line( aes(color=factor(Chick)) ) +
+   scale_color_manual(values=c("red", "blue", "green"))#<<
 
 ```
 
---
-
-- Look! `ggplot` gives us a legend without us having to ask for it!
 ---
 
+# Line graphs & legend titles: ggplot2
+
+- That's also an ugly legend title so we'll change it by adding a new title to `scale_color_manual()`
+
+```{r line graph ggplot leg title code, eval=F}
+
+ChickWeight %>% 
+   filter( Chick %in% c(1, 5, 27) ) %>% 
+   ggplot( aes(Time, weight, group=factor(Chick)) ) +
+   geom_line( aes(color=factor(Chick)) ) +
+   scale_color_manual( "Chick", values=c("red", "blue", "green") ) #<<
+
+```
+
+---
+
+# Line graphs & legend titles: ggplot2
+
+```{r line graph ggplot leg title, echo=FALSE}
+
+ChickWeight %>% 
+   filter( Chick %in% c(1, 5, 27) ) %>% 
+   ggplot( aes(Time, weight, group=factor(Chick)) ) +
+   geom_line( aes(color=factor(Chick)) ) +
+   scale_color_manual( "Chick", values=c("red", "blue", "green") ) #<<
+
+```
+---
+
+# Barcharts: Base R
+
+- In base R we need count data to use the `barplot()` function so we need to do some data management to get the total bags used by avocado type.
+
+- Here I'm just adding up all the Total Bags for conventional avocados and organic avocados
+```{r counts}
+counts.av <- c( sum(avocado[which(avocado$type=="conventional"),"Total Bags"]),
+               sum(avocado[which(avocado$type=="organic"),"Total Bags"]) )
+# give the numbers names so each bar will have a name when we plot #
+names( counts.av ) <- c("conventional", "organic")
+```
+```{r barchart code, eval=FALSE}
+barplot( counts.av )
+```
+---
+
+# Barcharts: Base R
+
+```{r barchart}
+barplot( counts.av )
+```
+---
+
+# Barcharts & colors: Base R
+
+- We can color the bars by type
+```{r barplot col code, eval=FALSE}
+barplot( counts.av,
+         col=c("red", "blue"))#<<
+```
+---
+
+# Barcharts & colors: Base R
+
+```{r barplot col}
+barplot( counts.av,
+         col=c("red", "blue"))#<<
+```
+---
+
+# Stacked barchats: Base R
+
+- We can also do stacked barcharts (we need to do some more data management to get total bag counts by avocado type and region)
+
+```{r stack bar backwork, echo=FALSE}
+
+counts.grp <- rbind( c(sum(avocado[which(avocado$type=="conventional" & avocado$region=="TotalUS"),"Total Bags"]),
+                         sum(avocado[which(avocado$type=="organic" & avocado$region=="TotalUS"),"Total Bags"])),
+                     c(sum(avocado[which(avocado$type=="conventional" & avocado$region=="LosAngeles"),"Total Bags"]),
+                       sum(avocado[which(avocado$type=="organic" & avocado$region=="LosAngeles"),"Total Bags"])),
+                     c(sum(avocado[which(avocado$type=="conventional" & avocado$region=="SanDiego"),"Total Bags"]),
+                       sum(avocado[which(avocado$type=="organic" & avocado$region=="SanDiego"),"Total Bags"])) )
+colnames( counts.grp ) <- unique( avocado$type )
+rownames( counts.grp ) <- c("TotalUS", "LosAngeles", "SanDiego")
+
+```
+
+- If you don't specify colors it will just be grayscale
+
+- `barplot()` also comes with a `legend` argument to create a legend
+
+```{r stack bar code, eval=FALSE}
+barplot( counts.grp,  col=c("red","blue", "green"),
+         legend = rownames(counts.grp) )#<<
+
+```
+---
+# Stacked barcharts: Base R
+
+```{r stack bar}
+barplot( counts.grp,  col=c("red","blue", "green"),
+         legend = rownames(counts.grp) )#<<
+
+```
+---
+
+# Grouped barcharts: Base R
+
+- `beside=TRUE` gets you the grouped aesthetic
+
+```{r grp bar chart code, eval=FALSE}
+barplot( counts.grp, col=c("red","blue", "green"),
+        legend = rownames(counts.grp),
+        beside=TRUE )#<<
+
+```
+---
+
+# Grouped barcharts: Base R
+
+```{r grp bar chart}
+barplot( counts.grp, col=c("red","blue", "green"),
+        legend = rownames(counts.grp),
+        beside=TRUE )#<<
+
+```
+---
+
+# Horizontal barcharts: Base R
+
+- `horiz=TRUE` will get you a horizontal barchart
+
+```{r horiz bar code, eval=FALSE}
+barplot( counts.grp, col=c("red","blue", "green"),
+         legend = rownames(counts.grp),
+         beside=TRUE,
+         horiz=TRUE )#<<
+```
+---
+
+# Horizontal barcharts: Base R
+
+```{r horiz bar}
+barplot( counts.grp, col=c("red","blue", "green"),
+         legend = rownames(counts.grp),
+         beside=TRUE,
+         horiz=TRUE )#<<
+```
+---
 # Barcharts: ggplot2
 
 - `+ geom_bar()` will get you a barchart
 
-```{r barchart ggplot, fig.height=5}
-avocado %>% 
-   ggplot( aes(type, `Total Bags` ) ) +
-   geom_bar( position='dodge', stat='identity' )
-```
+- In ggplot, we can just plug in the data as it exists
 
+```{r barchart ggplot code, eval=FALSE}
+avocado %>% 
+   ggplot( aes(type, `Total Bags`)) +
+   geom_bar( stat='identity' )#<<
+
+```
 ---
 
 # Barcharts: ggplot2
 
-- We can also do side-by-side barcharts
+```{r barchart ggplot}
+avocado %>% 
+   ggplot( aes(type, `Total Bags`)) +
+   geom_bar( stat='identity' )#<<
 
-- need to specify `col=` argument in the `ggplot` `aes()`, as well as the `fill=` argument in the `geom_bar` `aes()`
+```
 
-```{r bar ggplot region, fig.height=4}
+---
+
+# Barcharts & color: ggplot2
+
+- We can color the bars by type using the `fill=` argument
+
+```{r barchart col ggplot code, eval=FALSE}
+avocado %>% 
+   ggplot( aes(type, `Total Bags`,
+               fill=type)) +#<<
+   geom_bar( stat='identity' )
+```
+---
+
+# Barcharts & color: ggplot2
+
+```{r barchart col ggplot}
+avocado %>% 
+   ggplot( aes(type, `Total Bags`,
+               fill=type)) +#<<
+   geom_bar( stat='identity' )
+```
+---
+
+# Barcharts & color: ggplot2
+
+- We can specify our own colors by adding `scale_fill_manual()`
+
+```{r barchart specific col ggplot code, eval=FALSE}
+avocado %>% 
+   ggplot( aes(type, `Total Bags`, fill=type) ) +
+   geom_bar( stat='identity', aes(color=type, fill=type) ) +
+   scale_color_manual( values=c("red", "blue") )#<<
+
+```
+---
+
+# Barcharts & color: ggplot2
+
+```{r barchart specific col ggplot}
+avocado %>% 
+   ggplot( aes(type, `Total Bags`, fill=type) ) +
+   geom_bar( stat='identity', aes(color=type, fill=type) ) +
+   scale_color_manual( values=c("red", "blue") )#<<
+
+```
+---
+
+# Stacked barcharts: ggplot2
+
+- We can get stacked bars by using the `col=` argument in the `aes()` of `ggplot()` and `fill=` in the `aes()` of `geom_bar`
+
+```{r stacked bar ggplot code, eval=FALSE}
+
 avocado %>% 
    filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
    ggplot( aes(type, `Total Bags`,
-               col=factor(region) ) ) + #<<
-   geom_bar( position='dodge',#<<
-             stat='identity',
-             aes( fill=factor(region) ) ) #<<
-```
+               col=factor(region) ) ) +#<<
+   geom_bar( stat='identity',
+             aes( fill=factor(region) ) )#<<
 
+```
 ---
 
-# Barcharts: ggplot2
+# Stacked barcharts: ggplot2
 
-- We can also do stacked barcharts
+```{r stacked bar ggplot, out.width="48%"}
 
-```{r bar ggplot stack, fig.height=5}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, `Total Bags`,
+               col=factor(region) ) ) +#<<
+   geom_bar( stat='identity',
+             aes( fill=factor(region) ) )#<<
+
+```
+---
+
+# Grouped barcharts: ggplot2
+
+- Or we can grouped bars if we set `position='dodge'` in `geom_bar`
+
+```{r grp bar ggplot code, eval=FALSE}
 avocado %>% 
    filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
    ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
-   geom_bar( stat='identity', #<<
-             aes( fill=factor(region) ) )
-```
+   geom_bar( position='dodge',#<<
+             stat='identity', aes( fill=factor(region) ) )
 
+```
+---
+
+# Grouped barcharts: ggplot2
+
+```{r grp bar ggplot}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
+   geom_bar( position='dodge',#<<
+             stat='identity', aes( fill=factor(region) ) )
+
+```
+---
+
+# Horizontal barcharts: ggplot2
+
+- We can even get a horizontal barchart by adding `coord_flip()`
+
+```{r horiz bar ggplot code, eval=FALSE}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
+   geom_bar( position='dodge', stat='identity', aes( fill=factor(region) ) ) +
+   coord_flip()#<<
+
+```
+---
+
+# Horizontal barcharts: ggplot2
+
+```{r horiz bar ggplot, out.width="50%"}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
+   geom_bar( position='dodge', stat='identity', aes( fill=factor(region) ) ) +
+   coord_flip()#<<
+
+```
 ---
 
 # Boxplots: Base R
 
-- We use the function `boxplot()` to do our plotting
+- Overall, boxplots are pretty easy in base R
 
-- Overall boxplot pretty easy in base R, but has a different syntax than we've had before
-      - y axis variable first, tilde, then x axis variable
-      
+```{r boxplot code, eval=F}
+boxplot( avocado$AveragePrice )
+```
+---
+
+# Boxplots: Base R
+
 ```{r boxplot}
+boxplot( avocado$AveragePrice )
+```
+---
+
+# Boxplots: Base R
+
+- But its got very different syntax than we've had before if we want to do multiple boxplots per window
+      - y axis variable first, tilde, then x axis variable
+```{r boxplot multi code, eval=FALSE}
+
 boxplot( AveragePrice ~ type, data=avocado )
 
 ```
-
 ---
 
 # Boxplots: Base R
 
-- But if we want to do multiple regions per type...
+```{r boxplot multi}
 
-```{r boxplot regions}
-# Set up boxplot domain #
-boxplot(unlist(avocado[which(avocado$region %in% c("TotalUS", "LosAngeles", "SanDiego")),"AveragePrice"])~unlist(avocado[which(avocado$region %in% c("TotalUS", "LosAngeles", "SanDiego")),"type"]),
+boxplot( AveragePrice ~ type, data=avocado )
+
+```
+---
+
+# Grouped boxplots: Base R
+
+- But if we want to do multiple regions per type (i.e., like grouped bar charts)...
+
+- First, set up the 'bones' of the plot (won't actually give us any boxes)
+
+```{r grp box 1 code, eval=FALSE}
+
+boxplot( avocado$AveragePrice ~ avocado$type,
         xlim = c(0.5, 2+0.5),
         boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
-        ylab="Average Price")
+        ylab="Average Price" ) #invisible boxes
 
-# Total US boxplots #
-boxplot(unlist(avocado[which(avocado$region=="TotalUS"), "AveragePrice"]) ~ unlist(avocado[which(avocado$region=="TotalUS"), "type"]),
-        xaxt="n", add=TRUE, boxfill="blue", boxwex=0.25)
-
-# LA boxplots #
-boxplot(unlist(avocado[which(avocado$region=="LosAngeles"), "AveragePrice"]) ~ unlist(avocado[which(avocado$region=="LosAngeles"), "type"]),
-        xaxt="n", add=TRUE, boxfill="red", boxwex=0.25, at=c(1,2) - 0.3)
-
-# San Diego boxplots #
-boxplot(unlist(avocado[which(avocado$region=="SanDiego"), "AveragePrice"]) ~ unlist(avocado[which(avocado$region=="SanDiego"), "type"]),
-        xaxt="n", add=TRUE, boxfill="green", boxwex=0.25, at=c(1,2) + 0.3)
-
-# legend #
-legend("topleft", c("Total US", "Los Angeles", "San Diego"),
-       lty=1,lwd=5, bty="n",col=c("blue", "red", "green"),
-       cex=0.7 )
 ```
+---
 
+# Grouped boxplots: Base R
+
+- Then we'll plot the Total US boxplots
+      - `boxfill=` controls the box-fill color (not the border color)
+      - `border=` would control the border color of the box (default is black)
+      - `boxwex` controls how wide the boxes will be
+      - `xaxt="n"` tells the plot not to include a new x-axis (because we already created that in the "bones" above)
+      
+```{r grp box 2 code, eval=FALSE}
+
+boxplot( unlist(avocado[which(avocado$region=="TotalUS"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="TotalUS"), "type"]),
+        xaxt="n", add=TRUE, boxfill="blue", boxwex=0.25 )
+
+```
+---
+
+# Grouped boxplots: Base R
+
+- Then plot the LA boxplots
+      - The `at=` argument shifts the LA boxes 0.3 to left at points 1 (conventional) and 2 (organic)
+      
+```{r grp box 3 code, eval=FALSE}
+
+boxplot( unlist(avocado[which(avocado$region=="LosAngeles"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="LosAngeles"), "type"]),
+        xaxt="n", add=TRUE, boxfill="red", boxwex=0.25, at=c(1,2) - 0.3 ) 
+
+```
+---
+
+# Grouped boxplots: base R
+
+- Next plot the San Diego boxplots
+      - Here we're shifting the San Diego boxes 0.3 to the right
+      
+```{r grp box 4 code, eval=FALSE}
+
+boxplot( unlist(avocado[which(avocado$region=="SanDiego"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="SanDiego"), "type"]),
+        xaxt="n", add=TRUE, boxfill="green", boxwex=0.25, at=c(1,2) + 0.3 )
+
+```
+---
+
+# Grouped boxplots: Base R
+
+- Finally, we'll add a legend
+
+- The `pch=` argument controls what symbols you want for the symbols
+      - This would be in place of using a `lty=` argument that would specify the line pattern
+      - I can never remember which `pch` code corresponds to what, so I usually google: http://www.endmemo.com/program/R/pchsymbols.php
+
+- `cex=` tells us how large we want the text; 0.7 is 70% of the normal size
+```{r grp box 5 code, eval=FALSE}
+
+legend( "topleft", c("Total US", "Los Angeles", "San Diego"),
+       pch=15, bty="n",col=c("blue", "red", "green"),
+       cex=0.7 )
+
+```
+---
+
+# Grouped boxplots: Base R
+
+- All together now!
+
+```{r grp box 6 code, eval=FALSE}
+boxplot( avocado.region$AveragePrice ~ avocado.region$type,
+        xlim = c(0.5, 2+0.5),
+        boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
+        ylab="Average Price" ) #invisible boxes
+
+boxplot( unlist(avocado[which(avocado$region=="TotalUS"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="TotalUS"), "type"]),
+        xaxt="n", add=TRUE, boxfill="blue", boxwex=0.25 )
+
+boxplot( unlist(avocado[which(avocado$region=="LosAngeles"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="LosAngeles"), "type"]),
+        xaxt="n", add=TRUE, boxfill="red", boxwex=0.25, at=c(1,2) - 0.3 ) 
+
+boxplot( unlist(avocado[which(avocado$region=="SanDiego"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="SanDiego"), "type"]),
+        xaxt="n", add=TRUE, boxfill="green", boxwex=0.25, at=c(1,2) + 0.3 )
+
+legend( "topleft", c("Total US", "Los Angeles", "San Diego"),
+       pch=15, bty="n",col=c("blue", "red", "green"),
+       cex=0.7 )
+
+```
+---
+
+# Grouped boxplots: Base R
+
+- Man, that was a lot of work!
+
+```{r grp box, echo=FALSE}
+boxplot( avocado$AveragePrice ~ avocado$type,
+        xlim = c(0.5, 2+0.5),
+        boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
+        ylab="Average Price" ) #invisible boxes
+
+boxplot( unlist(avocado[which(avocado$region=="TotalUS"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="TotalUS"), "type"]),
+        xaxt="n", add=TRUE, boxfill="blue", boxwex=0.25 )
+
+boxplot( unlist(avocado[which(avocado$region=="LosAngeles"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="LosAngeles"), "type"]),
+        xaxt="n", add=TRUE, boxfill="red", boxwex=0.25, at=c(1,2) - 0.3 ) 
+
+boxplot( unlist(avocado[which(avocado$region=="SanDiego"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="SanDiego"), "type"]),
+        xaxt="n", add=TRUE, boxfill="green", boxwex=0.25, at=c(1,2) + 0.3 )
+
+legend( "topleft", c("Total US", "Los Angeles", "San Diego"),
+       pch=15, bty="n",col=c("blue", "red", "green"),
+       cex=0.7 )
+
+```
 ---
 
 # Boxplots: ggplot2
 
-- Whew! So much less work!
+- In ggplot2, you get boxplots using `geom_boxplot`
 
-```{r boxplot ggplot, fig.height=5}
+```{r boxplot ggplot code, eval=FALSE}
+avocado %>% 
+   ggplot( aes(x="", y=AveragePrice) ) +
+   geom_boxplot()#<<
+```
+---
+
+# Boxplots: ggplot2
+
+```{r boxplot ggplot}
+avocado %>% 
+   ggplot( aes(x="", y=AveragePrice) ) +
+   geom_boxplot()#<<
+```
+---
+
+# Boxplots: ggplot2
+
+- You can do boxplots factored by a variable
+
+```{r multi boxplot ggplot code, eval=FALSE}
+avocado %>% 
+   ggplot( aes(type, #<<
+               AveragePrice) ) +
+   geom_boxplot()
+```
+---
+
+# Boxplots: ggplot2
+
+```{r multi boxplot ggplot}
+avocado %>% 
+   ggplot( aes(type, #<<
+               AveragePrice) ) +
+   geom_boxplot()
+```
+---
+
+# Horizontal boxplots: ggplot2
+
+- You can even do a horizontal boxplot by adding `coord_flip()` like with barcharts
+
+```{r horiz box ggplot code, eval=FALSE}
+avocado %>% 
+   ggplot( aes(type, AveragePrice) ) +
+   geom_boxplot() +
+   coord_flip()#<<
+```
+---
+
+# Horizontal boxplots: ggplot2
+
+```{r horiz box ggplot}
+avocado %>% 
+   ggplot( aes(type, AveragePrice) ) +
+   geom_boxplot() +
+   coord_flip()#<<
+```
+---
+
+# Grouped boxplots: ggplot2
+
+- And it's a snap to do grouped boxplots when you color by factored region
+
+```{r grp box ggplot code, eval=FALSE}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% #<<
+   ggplot( aes(type, AveragePrice,
+               fill=factor(region) ) ) +#<<
+   geom_boxplot()
+```
+---
+
+# Grouped boxplots: ggplot2
+
+- Whew! so much less work!
+
+```{r grp box ggplot, out.width="46%"}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% #<<
+   ggplot( aes(type, AveragePrice,
+               fill=factor(region) ) ) +#<<
+   geom_boxplot()
+```
+---
+class: middle
+
+# <center> Thanks! </center>
+
+These slides can be found at <a href="https://maryryan.github.io/BuildingGraphicsInR19/PRESENTATION_buildGraphicsInR19">https://maryryan.github.io/BuildingGraphicsInR19/PRESENTATION_buildGraphicsInR19#1</a>
+
+<!-- social media info -->
+<div style="position:fixed; bottom:40px; left:70px;">
+<div><img src="libs/Twitter-Social-Icons/Twitter_SocialIcon_Circle/Twitter_Social_Icon_Circle_Color.png" width="40"/> <a href="https://twitter.com/Marym_Ryan"> @Marym_Ryan </a></div>
+<div><img src="libs/GitHub-Mark/PNG/GitHub-Mark-120px-plus.png" width="40"/> <a href="https://github.com/maryryan"> github.com/maryryan </a> </div>
+</div>
+
+---
+class: middle
+
+
+```{r bonus, echo=FALSE, out.width='100%', fig.align="center"}
+knitr::include_graphics('./bonusRound.jpg')
+```
+
+---
+class: middle
+
+# <center> Themes with ggplot2 </center>
+
+---
+
+# Themes with ggplot2
+
+- You can also apply pre-set color schemes to you ggplots by using themes:
+
+- `classic` theme gets rid of the background color and grid lines
+      
+```{r classic theme code, eval=FALSE}
 avocado %>% 
    filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
-   ggplot( aes(type, AveragePrice, col=factor(region) ) ) + geom_boxplot()
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+   theme_classic()#<<
+```
+---
 
+# Themes with ggplot2
+
+```{r classic theme}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+   theme_classic()#<<
+```
+---
+
+# Themes with ggplot2
+
+- `bw` theme gives you white background and gray lines
+
+```{r bw theme code, eval=FALSE}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+   theme_bw()#<<
+```
+---
+
+# Themes with ggplot2
+
+```{r bw theme}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+   theme_bw()#<<
+```
+---
+
+# Themes with ggplot2 
+
+- `void` theme takes pretty much everything away
+
+```{r void theme code, eval=FALSE}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+   theme_void()#<<
+```
+---
+
+# Themes with ggplot2 
+
+```{r void theme}
+avocado %>% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %>% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+   theme_void()#<<
+```
+---
+
+# Themes with ggplot2
+
+- You can find a complete list of the themes here: https://ggplot2.tidyverse.org/reference/ggtheme.html
+---
+class:middle
+
+# <center> Maps with ggplot2 </center>
+
+---
+
+# Maps with ggplot2
+
+- Most of this is taken from this reproducible research course by Eric C. Anderson for (NOAA/SWFSC): http://eriqande.github.io/rep-res-web/lectures/making-maps-with-R.html
+
+- The key to making maps is you either need latitude and longitude data or polygon data (in the case of base R)
+
+- First, load up USA coordinate data in a usable form using `map_data`
+```{r map load}
+usa <- map_data("usa")
+```
+---
+
+# Maps with ggplot2
+
+- Now, create our map using `geom_polygon`
+
+```{r map, out.width="50%"}
+usa %>% 
+   ggplot() +
+   geom_polygon( aes(x=long, y = lat, group = group) )
+```
+---
+
+# Maps with ggplot2
+
+- Next, we'll make it look less squished by playing with the aspect ratio using `coord_fixed()`
+
+```{r map coord}
+usa %>% 
+   ggplot() +
+   geom_polygon( aes(x=long, y = lat, group = group)) + 
+   coord_fixed(1.3)#<<
+```
+---
+
+# Maps with ggplot2
+
+- We can add some points to the map
+
+```{r map points code, eval=FALSE}
+labs <- data.frame(#<<
+   long = c(-122.064873, -122.306417),#<<
+   lat = c(36.951968, 47.644855),#<<
+   stringsAsFactors = FALSE#<<
+)  #<<
+
+usa %>% 
+   ggplot() + 
+   geom_polygon( aes(x=long, y = lat, group = group) ) + 
+   geom_point( data = labs, aes(x = long, y = lat), color = "black", size = 5 ) +#<<
+   geom_point( data = labs, aes(x = long, y = lat), color = "yellow", size = 4 ) +#<<
+   coord_fixed(1.3)
+```
+---
+
+# Maps with ggplot2
+
+```{r map points, echo=FALSE}
+labs <- data.frame(#<<
+   long = c(-122.064873, -122.306417),#<<
+   lat = c(36.951968, 47.644855),#<<
+   stringsAsFactors = FALSE#<<
+)  #<<
+
+usa %>% 
+   ggplot() + 
+   geom_polygon( aes(x=long, y = lat, group = group) ) + 
+   geom_point( data = labs, aes(x = long, y = lat), color = "black", size = 5 ) +#<<
+   geom_point( data = labs, aes(x = long, y = lat), color = "yellow", size = 4 ) +#<<
+   coord_fixed(1.3)
+```
+---
+
+# Maps with ggplot2
+
+- And we can do a map with states!
+
+- First load state map data
+
+```{r state map load}
+states <- map_data("state")
+```
+
+- `color=white` will get us white state borders
+- `guides(fill=FALSE)` will block the automatic color legend
+
+````{r state map code, eval=FALSE}
+states %>% 
+   ggplot() + 
+   geom_polygon(aes(x = long, y = lat, fill = region, group = group),
+                color = "white") + #<<
+   coord_fixed(1.3) +
+   guides(fill=FALSE) #<<
+```
+---
+
+# Maps with ggplot2
+
+
+````{r state map}
+states %>% 
+   ggplot() + 
+   geom_polygon(aes(x = long, y = lat, fill = region, group = group),
+                color = "white") + #<<
+   coord_fixed(1.3) +
+   guides(fill=FALSE) #<<
+```
+---
+
+# Maps with ggplot2
+
+- And here we get some specific states
+
+```{r west coast code, eval=FALSE}
+west_coast <- subset(states, region %in% c("california", "oregon", "washington"))
+
+west_coast %>% 
+   ggplot() + 
+   geom_polygon(aes(x = long, y = lat, group = group),
+                fill = "violet", color = "white") + 
+   coord_fixed(1.3)
+```
+---
+
+# Maps with ggplot2
+
+```{r west coast, echo=FALSE}
+west_coast <- subset(states, region %in% c("california", "oregon", "washington"))
+
+west_coast %>% 
+   ggplot() + 
+   geom_polygon(aes(x = long, y = lat, group = group),
+                fill = "violet", color = "white") + 
+   coord_fixed(1.3)
 ```

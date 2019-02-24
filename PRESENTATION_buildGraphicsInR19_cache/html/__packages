@@ -12,3 +12,5 @@ stringr
 forcats
 readxl
 bindrcpp
+knitr
+maps

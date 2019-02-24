@@ -4,7 +4,7 @@
 ###################### March 7-10
 ###################### INSTRUCTOR: Mary Ryan
 ###################### CREATED 1.30.2019
-###################### UPDATED 
+###################### UPDATED 2.23.2019
 ##################
 
 #### LOAD LIBRARIES ####
@@ -140,7 +140,7 @@ ChickWeight %>%
    filter( Chick %in% c(1, 5, 27) ) %>% 
    ggplot( aes(Time, weight, group=factor(Chick)) ) +
    geom_line( aes(color=factor(Chick)) ) +
-   scale_color_manual( "Chick", values=c("red", "blue", "green") ) + 
+   scale_color_manual( "Chick", values=c("red", "blue", "green") )
 
 
 #### BAR CHARTS ####

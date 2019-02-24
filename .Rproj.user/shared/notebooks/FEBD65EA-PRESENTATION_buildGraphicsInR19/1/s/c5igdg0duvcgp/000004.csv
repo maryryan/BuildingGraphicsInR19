@@ -1,4 +1,0 @@
-"0","avocado %>% "
-"0","   filter( region %in% c(""TotalUS"", ""LosAngeles"", ""SanDiego"") ) %>% #<<"
-"0","   ggplot( aes(Date, AveragePrice) ) +"
-"0","   geom_line()"

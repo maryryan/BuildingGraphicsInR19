@@ -1,2 +1,0 @@
-"0","avocado %>% "
-"0","   ggplot( aes(Date, AveragePrice) ) + geom_line()"

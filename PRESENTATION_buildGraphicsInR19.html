@@ -18,6 +18,8 @@
 
 
 
+
+
 layout: true
 class: 
 
@@ -90,7 +92,7 @@ class: title-slide2
       
 ---
 
-# Scatter plots: base R
+# Scatter plots: Base R
 
 - Most basic plot
 
@@ -104,8 +106,6 @@ class: title-slide2
 
 - x-axis variable goes first, then the y-axis variable
 
---
-
 
 ```r
 plot( avocado$`Total Volume`, avocado$AveragePrice )
@@ -113,15 +113,40 @@ plot( avocado$`Total Volume`, avocado$AveragePrice )
 
 ---
 
-# Scatter plots: base R
+# Scatter plots: Base R
 
 
 ```r
 plot( avocado$`Total Volume`, avocado$AveragePrice )
 ```
 
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/scatter plot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/scatter plot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
 
+---
+
+# Scatter plots &amp; titles: Base R
+
+- We can add titles and change axis labels by using the `main=`, `xlab=`, and `ylab=` arugments
+
+
+```r
+plot( avocado$`Total Volume`, avocado$AveragePrice,
+*     main="Avocados",
+*     xlab="Total Volume", ylab="Average Price ($)")
+```
+
+---
+
+# Scatter plots &amp; titles: Base R
+
+
+```r
+plot( avocado$`Total Volume`, avocado$AveragePrice,
+*     main="Avocados",
+*     xlab="Total Volume", ylab="Average Price ($)")
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/scatter plot titles-1.png" width="53%" style="display: block; margin: auto;" /&gt;
 ---
 
 # Scatter plots: ggplot2
@@ -134,8 +159,6 @@ plot( avocado$`Total Volume`, avocado$AveragePrice )
 
 - `+ geom_point()` gets us a scatter (point) plot
 
---
-
 
 ```r
 avocado %&gt;% 
@@ -148,91 +171,504 @@ avocado %&gt;%
 # Scatter plots: ggplot2
 
 
-
 ```r
 avocado %&gt;% 
    ggplot( aes(`Total Volume`, AveragePrice) ) +
 *  geom_point()
 ```
 
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/scatter ggplot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/scatter ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
 
 ---
 
-# Line plots: base R
+# Scatter plots &amp; titles: ggplot2
+
+- And we can rename our axes, or even add a main title, by adding `labs()`, `xlab()`, and `ylab()`
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(`Total Volume`, AveragePrice) ) +
+   geom_point() + 
+*  labs(title = "Avocados") +
+*  xlab("Total Volume") + ylab("Average Price ($)")
+```
 
 ---
 
-# Line plots: ggplot2
+# Scatter plots &amp; titles: ggplot 2
 
-- `+ geom_line()` gets us a line plot
+
+```r
+avocado %&gt;% 
+   ggplot( aes(`Total Volume`, AveragePrice) ) +
+   geom_point() + 
+*  labs(title = "Avocados") +
+*  xlab("Total Volume") + ylab("Average Price ($)")
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/scatter plot ggplot titles-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+---
+
+# Line graphs: Base R
+
+- There's actually a `type` argument in the `plot()` function that tells R what type of plot to make
+
+- The default for type is "p", which stands for "point""
+
+- To make a line plot, we need to set it to "l" for line
+
+
+```r
+plot( ChickWeight$Time, ChickWeight$weight,
+*     type="l",
+      xlab="Weight", ylab="Time")
+```
+
+---
+
+# Line graphs: Base R
+
+
+```r
+plot( ChickWeight$Time, ChickWeight$weight,
+*     type="l",
+      xlab="Weight", ylab="Time")
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Line graphs &amp; new lines: Base R
+
+- To get different lines by chick, we plot one chick's data in the plot first, then we add more ines using the `lines()` function for the other chicks we want
 
 --
 
 
 ```r
-avocado %&gt;% 
-   ggplot( aes(Date, AveragePrice) ) +
-*  geom_line()
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l",
+     xlab="Weight", ylab="Time")
+*lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],
+*     ChickWeight[which(ChickWeight$Chick==5),"weight"])
+*lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],
+*     ChickWeight[which(ChickWeight$Chick==27),"weight"])
 ```
-
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line ggplot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
-
 ---
 
-# Line plots: ggplot2
-
-- We can make different lines by region if we `filter()` the data before before sending it to `ggplot()`
+# Line graphs &amp; new lines: Base R
 
 
 ```r
-avocado %&gt;% 
-*  filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;%
-   ggplot( aes(Date, AveragePrice) ) +
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l",
+     xlab="Weight", ylab="Time")
+*lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],
+*     ChickWeight[which(ChickWeight$Chick==5),"weight"])
+*lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],
+*     ChickWeight[which(ChickWeight$Chick==27),"weight"])
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph chick-1.png" width="45%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Line graphs &amp; colors: Base R
+
+- It's a little hard to tell the difference between the lines, so we can give each line its own color using the `col=` argument in both `plot()` and `lines()`
+
+
+```r
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l",
+*    col="red",
+     xlab="Weight", ylab="Time")
+lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],
+      ChickWeight[which(ChickWeight$Chick==5),"weight"],
+*     col="blue")
+lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],
+      ChickWeight[which(ChickWeight$Chick==27),"weight"],
+*     col="green")
+```
+---
+
+# Line graphs &amp; colors: Base R
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph chick col-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Line graphs &amp; legends: Base R
+
+- We can also add a legend to the plot for the reader to be able to tell which line color belongs to which chick. This is done using the `legend()` function after we've called the plot
+
+- What you need in the `legend()` function:
+      - location: can be the coordinates where you want the box to appear or phrases like "topleft" or "bottomright"
+      - legend: what sort of text do you want appearing in the legend?
+      - parameters: these are things like `lty`, `pch`, or `bty` that tells R what line pattern or  dot symbol you want to appear , or if you want a box (respectively)
+      - col: what kind of colors do you want your lines/symbols to be? 
+      
+
+```r
+plot(ChickWeight[which(ChickWeight$Chick==1), "Time"],
+     ChickWeight[which(ChickWeight$Chick==1),"weight"],
+     type="l", col="red",
+     xlab="Weight", ylab="Time")
+lines(ChickWeight[which(ChickWeight$Chick==5), "Time"],
+      ChickWeight[which(ChickWeight$Chick==5),"weight"], col="blue")
+lines(ChickWeight[which(ChickWeight$Chick==27), "Time"],
+      ChickWeight[which(ChickWeight$Chick==27),"weight"], col="green")
+
+*legend("topleft", legend = c("Chick 1", "Chick 5", "Chick 27"),
+*      lty=1, bty="n", col=c("red", "blue", "green") )
+```
+---
+
+# Line graphs &amp; legends: Base R
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph legend-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Line graphs: ggplot2
+
+- In ggplot, using `+ geom_line()` instead of `+ geom_point()` will get us a line graph 
+
+
+```r
+ChickWeight %&gt;% 
+   ggplot( aes(Time, weight) ) +
+*  geom_line()
+```
+---
+
+# Line graphs: ggplot2
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+
+--
+
+- This looks way different than in base R! That's because ggplot is taking the average weight at each time point, while base R was connecting all the lines of all the chicks
+
+---
+
+# Line graphs &amp; new lines: ggplot2
+
+- We can make different lines by chick if we `filter()` the data before before sending it to `ggplot()`, and grouping by the variable Chick
+
+
+```r
+ChickWeight %&gt;% 
+*  filter( Chick %in% c(1, 5, 27) ) %&gt;%
+   ggplot( aes(Time, weight,
+*              group=factor(Chick)) ) +
    geom_line()
 ```
 
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line ggplot region-1.png" width="55%" style="display: block; margin: auto;" /&gt;
-
 ---
 
-# Line plots: ggplot2
-
-- It was a little hard to tell the difference between regions on that one, so we can also give the lines different colors by using the `color` argument within `aes()`
+# Line graphs &amp; new lines: ggplot2
 
 
 ```r
-avocado %&gt;% 
-   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
-   ggplot( aes(Date, AveragePrice,
-*              color=factor(region))
-           ) + geom_line()
+ChickWeight %&gt;% 
+*  filter( Chick %in% c(1, 5, 27) ) %&gt;%
+   ggplot( aes(Time, weight,
+*              group=factor(Chick)) ) +
+   geom_line()
 ```
 
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line ggplot region color-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph ggplot chick-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+---
+
+# Line graphs &amp; colors: ggplot2
+
+- We can can give the lines different colors by using the `color` argument within `aes()` #
+
+
+```r
+ChickWeight %&gt;% 
+   filter( Chick %in% c(1, 5, 27) ) %&gt;% 
+   ggplot( aes(Time, weight,
+*              color=factor(Chick)) ) +
+   geom_line()
+```
+---
+
+# Line graphs &amp; colors: ggplot2
+
+
+```r
+ChickWeight %&gt;% 
+   filter( Chick %in% c(1, 5, 27) ) %&gt;% 
+   ggplot( aes(Time, weight,
+*              color=factor(Chick)) ) +
+   geom_line()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph ggplot col-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+---
+
+# Line graphs &amp; colors: ggplot2
+
+- If you want the chicks to be specific colors you can add `scale_color_manual()` along with setting color to the Chick variable in `geom_line()`
+
+
+```r
+ChickWeight %&gt;% 
+   filter( Chick %in% c(1, 5, 27) ) %&gt;% 
+   ggplot( aes(Time, weight, group=factor(Chick)) ) +
+   geom_line( aes(color=factor(Chick)) ) +
+*  scale_color_manual(values=c("red", "blue", "green"))
+```
+---
+
+# Line graphs &amp; colors: ggplot2
+
+
+```r
+ChickWeight %&gt;% 
+   filter( Chick %in% c(1, 5, 27) ) %&gt;% 
+   ggplot( aes(Time, weight, group=factor(Chick)) ) +
+   geom_line( aes(color=factor(Chick)) ) +
+*  scale_color_manual(values=c("red", "blue", "green"))
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph ggplot specific col-1.png" width="50%" style="display: block; margin: auto;" /&gt;
 
 ---
 
+# Line graphs &amp; legend titles: ggplot2
+
+- That's also an ugly legend title so we'll change it by adding a new title to `scale_color_manual()`
+
+
+```r
+ChickWeight %&gt;% 
+   filter( Chick %in% c(1, 5, 27) ) %&gt;% 
+   ggplot( aes(Time, weight, group=factor(Chick)) ) +
+   geom_line( aes(color=factor(Chick)) ) +
+*  scale_color_manual( "Chick", values=c("red", "blue", "green") )
+```
+
+---
+
+# Line graphs &amp; legend titles: ggplot2
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/line graph ggplot leg title-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Barcharts: Base R
+
+- In base R we need count data to use the `barplot()` function so we need to do some data management to get the total bags used by avocado type.
+
+- Here I'm just adding up all the Total Bags for conventional avocados and organic avocados
+
+```r
+counts.av &lt;- c( sum(avocado[which(avocado$type=="conventional"),"Total Bags"]),
+               sum(avocado[which(avocado$type=="organic"),"Total Bags"]) )
+# give the numbers names so each bar will have a name when we plot #
+names( counts.av ) &lt;- c("conventional", "organic")
+```
+
+```r
+barplot( counts.av )
+```
+---
+
+# Barcharts: Base R
+
+
+```r
+barplot( counts.av )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/barchart-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Barcharts &amp; colors: Base R
+
+- We can color the bars by type
+
+```r
+barplot( counts.av,
+*        col=c("red", "blue"))
+```
+---
+
+# Barcharts &amp; colors: Base R
+
+
+```r
+barplot( counts.av,
+*        col=c("red", "blue"))
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/barplot col-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Stacked barchats: Base R
+
+- We can also do stacked barcharts (we need to do some more data management to get total bag counts by avocado type and region)
+
+
+
+- If you don't specify colors it will just be grayscale
+
+- `barplot()` also comes with a `legend` argument to create a legend
+
+
+```r
+barplot( counts.grp,  col=c("red","blue", "green"),
+*        legend = rownames(counts.grp) )
+```
+---
+# Stacked barcharts: Base R
+
+
+```r
+barplot( counts.grp,  col=c("red","blue", "green"),
+*        legend = rownames(counts.grp) )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/stack bar-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Grouped barcharts: Base R
+
+- `beside=TRUE` gets you the grouped aesthetic
+
+
+```r
+barplot( counts.grp, col=c("red","blue", "green"),
+        legend = rownames(counts.grp),
+*       beside=TRUE )
+```
+---
+
+# Grouped barcharts: Base R
+
+
+```r
+barplot( counts.grp, col=c("red","blue", "green"),
+        legend = rownames(counts.grp),
+*       beside=TRUE )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/grp bar chart-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Horizontal barcharts: Base R
+
+- `horiz=TRUE` will get you a horizontal barchart
+
+
+```r
+barplot( counts.grp, col=c("red","blue", "green"),
+         legend = rownames(counts.grp),
+         beside=TRUE,
+*        horiz=TRUE )
+```
+---
+
+# Horizontal barcharts: Base R
+
+
+```r
+barplot( counts.grp, col=c("red","blue", "green"),
+         legend = rownames(counts.grp),
+         beside=TRUE,
+*        horiz=TRUE )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/horiz bar-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
 # Barcharts: ggplot2
 
 - `+ geom_bar()` will get you a barchart
 
+- In ggplot, we can just plug in the data as it exists
+
 
 ```r
 avocado %&gt;% 
-   ggplot( aes(type, `Total Bags` ) ) +
-   geom_bar( position='dodge', stat='identity' )
+   ggplot( aes(type, `Total Bags`)) +
+*  geom_bar( stat='identity' )
 ```
-
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/barchart ggplot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
-
 ---
 
 # Barcharts: ggplot2
 
-- We can also do side-by-side barcharts
 
-- need to specify `col=` argument in the `ggplot` `aes()`, as well as the `fill=` argument in the `geom_bar` `aes()`
+```r
+avocado %&gt;% 
+   ggplot( aes(type, `Total Bags`)) +
+*  geom_bar( stat='identity' )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/barchart ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+
+---
+
+# Barcharts &amp; color: ggplot2
+
+- We can color the bars by type using the `fill=` argument
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(type, `Total Bags`,
+*              fill=type)) +
+   geom_bar( stat='identity' )
+```
+---
+
+# Barcharts &amp; color: ggplot2
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(type, `Total Bags`,
+*              fill=type)) +
+   geom_bar( stat='identity' )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/barchart col ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Barcharts &amp; color: ggplot2
+
+- We can specify our own colors by adding `scale_fill_manual()`
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(type, `Total Bags`, fill=type) ) +
+   geom_bar( stat='identity', aes(color=type, fill=type) ) +
+*  scale_color_manual( values=c("red", "blue") )
+```
+---
+
+# Barcharts &amp; color: ggplot2
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(type, `Total Bags`, fill=type) ) +
+   geom_bar( stat='identity', aes(color=type, fill=type) ) +
+*  scale_color_manual( values=c("red", "blue") )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/barchart specific col ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Stacked barcharts: ggplot2
+
+- We can get stacked bars by using the `col=` argument in the `aes()` of `ggplot()` and `fill=` in the `aes()` of `geom_bar`
 
 
 ```r
@@ -240,50 +676,604 @@ avocado %&gt;%
    filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
    ggplot( aes(type, `Total Bags`,
 *              col=factor(region) ) ) +
-*  geom_bar( position='dodge',
-             stat='identity',
+   geom_bar( stat='identity',
+*            aes( fill=factor(region) ) )
+```
+---
+
+# Stacked barcharts: ggplot2
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, `Total Bags`,
+*              col=factor(region) ) ) +
+   geom_bar( stat='identity',
 *            aes( fill=factor(region) ) )
 ```
 
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/bar ggplot region-1.png" width="55%" style="display: block; margin: auto;" /&gt;
-
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/stacked bar ggplot-1.png" width="48%" style="display: block; margin: auto;" /&gt;
 ---
 
-# Barcharts: ggplot2
+# Grouped barcharts: ggplot2
 
-- We can also do stacked barcharts
+- Or we can grouped bars if we set `position='dodge'` in `geom_bar`
 
 
 ```r
 avocado %&gt;% 
    filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
    ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
-*  geom_bar( stat='identity',
-             aes( fill=factor(region) ) )
+*  geom_bar( position='dodge',
+             stat='identity', aes( fill=factor(region) ) )
 ```
-
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/bar ggplot stack-1.png" width="55%" style="display: block; margin: auto;" /&gt;
-
 ---
 
-# Boxplots: ggplot2
-
-- Whew! So much less work!
+# Grouped barcharts: ggplot2
 
 
 ```r
 avocado %&gt;% 
    filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
-   ggplot( aes(type, AveragePrice, col=factor(region) ) ) + geom_boxplot()
+   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
+*  geom_bar( position='dodge',
+             stat='identity', aes( fill=factor(region) ) )
 ```
 
-&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/boxplot ggplot-1.png" width="55%" style="display: block; margin: auto;" /&gt;
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/grp bar ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Horizontal barcharts: ggplot2
+
+- We can even get a horizontal barchart by adding `coord_flip()`
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
+   geom_bar( position='dodge', stat='identity', aes( fill=factor(region) ) ) +
+*  coord_flip()
+```
+---
+
+# Horizontal barcharts: ggplot2
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, `Total Bags`, col=factor(region) ) ) +
+   geom_bar( position='dodge', stat='identity', aes( fill=factor(region) ) ) +
+*  coord_flip()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/horiz bar ggplot-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+---
+
+# Boxplots: Base R
+
+- Overall, boxplots are pretty easy in base R
+
+
+```r
+boxplot( avocado$AveragePrice )
+```
+---
+
+# Boxplots: Base R
+
+
+```r
+boxplot( avocado$AveragePrice )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/boxplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Boxplots: Base R
+
+- But its got very different syntax than we've had before if we want to do multiple boxplots per window
+      - y axis variable first, tilde, then x axis variable
+
+```r
+boxplot( AveragePrice ~ type, data=avocado )
+```
+---
+
+# Boxplots: Base R
+
+
+```r
+boxplot( AveragePrice ~ type, data=avocado )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/boxplot multi-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Grouped boxplots: Base R
+
+- But if we want to do multiple regions per type (i.e., like grouped bar charts)...
+
+- First, set up the 'bones' of the plot (won't actually give us any boxes)
+
+
+```r
+boxplot( avocado$AveragePrice ~ avocado$type,
+        xlim = c(0.5, 2+0.5),
+        boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
+        ylab="Average Price" ) #invisible boxes
+```
+---
+
+# Grouped boxplots: Base R
+
+- Then we'll plot the Total US boxplots
+      - `boxfill=` controls the box-fill color (not the border color)
+      - `border=` would control the border color of the box (default is black)
+      - `boxwex` controls how wide the boxes will be
+      - `xaxt="n"` tells the plot not to include a new x-axis (because we already created that in the "bones" above)
+      
+
+```r
+boxplot( unlist(avocado[which(avocado$region=="TotalUS"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="TotalUS"), "type"]),
+        xaxt="n", add=TRUE, boxfill="blue", boxwex=0.25 )
+```
+---
+
+# Grouped boxplots: Base R
+
+- Then plot the LA boxplots
+      - The `at=` argument shifts the LA boxes 0.3 to left at points 1 (conventional) and 2 (organic)
+      
+
+```r
+boxplot( unlist(avocado[which(avocado$region=="LosAngeles"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="LosAngeles"), "type"]),
+        xaxt="n", add=TRUE, boxfill="red", boxwex=0.25, at=c(1,2) - 0.3 ) 
+```
+---
+
+# Grouped boxplots: base R
+
+- Next plot the San Diego boxplots
+      - Here we're shifting the San Diego boxes 0.3 to the right
+      
+
+```r
+boxplot( unlist(avocado[which(avocado$region=="SanDiego"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="SanDiego"), "type"]),
+        xaxt="n", add=TRUE, boxfill="green", boxwex=0.25, at=c(1,2) + 0.3 )
+```
+---
+
+# Grouped boxplots: Base R
+
+- Finally, we'll add a legend
+
+- The `pch=` argument controls what symbols you want for the symbols
+      - This would be in place of using a `lty=` argument that would specify the line pattern
+      - I can never remember which `pch` code corresponds to what, so I usually google: http://www.endmemo.com/program/R/pchsymbols.php
+
+- `cex=` tells us how large we want the text; 0.7 is 70% of the normal size
+
+```r
+legend( "topleft", c("Total US", "Los Angeles", "San Diego"),
+       pch=15, bty="n",col=c("blue", "red", "green"),
+       cex=0.7 )
+```
+---
+
+# Grouped boxplots: Base R
+
+- All together now!
+
+
+```r
+boxplot( avocado.region$AveragePrice ~ avocado.region$type,
+        xlim = c(0.5, 2+0.5),
+        boxfill=rgb(1, 1, 1, alpha=1), border=rgb(1, 1, 1, alpha=1),
+        ylab="Average Price" ) #invisible boxes
+
+boxplot( unlist(avocado[which(avocado$region=="TotalUS"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="TotalUS"), "type"]),
+        xaxt="n", add=TRUE, boxfill="blue", boxwex=0.25 )
+
+boxplot( unlist(avocado[which(avocado$region=="LosAngeles"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="LosAngeles"), "type"]),
+        xaxt="n", add=TRUE, boxfill="red", boxwex=0.25, at=c(1,2) - 0.3 ) 
+
+boxplot( unlist(avocado[which(avocado$region=="SanDiego"), "AveragePrice"]) ~
+            unlist(avocado[which(avocado$region=="SanDiego"), "type"]),
+        xaxt="n", add=TRUE, boxfill="green", boxwex=0.25, at=c(1,2) + 0.3 )
+
+legend( "topleft", c("Total US", "Los Angeles", "San Diego"),
+       pch=15, bty="n",col=c("blue", "red", "green"),
+       cex=0.7 )
+```
+---
+
+# Grouped boxplots: Base R
+
+- Man, that was a lot of work!
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/grp box-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Boxplots: ggplot2
+
+- In ggplot2, you get boxplots using `geom_boxplot`
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(x="", y=AveragePrice) ) +
+*  geom_boxplot()
+```
+---
+
+# Boxplots: ggplot2
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(x="", y=AveragePrice) ) +
+*  geom_boxplot()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/boxplot ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Boxplots: ggplot2
+
+- You can do boxplots factored by a variable
+
+
+```r
+avocado %&gt;% 
+*  ggplot( aes(type,
+               AveragePrice) ) +
+   geom_boxplot()
+```
+---
+
+# Boxplots: ggplot2
+
+
+```r
+avocado %&gt;% 
+*  ggplot( aes(type,
+               AveragePrice) ) +
+   geom_boxplot()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/multi boxplot ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Horizontal boxplots: ggplot2
+
+- You can even do a horizontal boxplot by adding `coord_flip()` like with barcharts
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(type, AveragePrice) ) +
+   geom_boxplot() +
+*  coord_flip()
+```
+---
+
+# Horizontal boxplots: ggplot2
+
+
+```r
+avocado %&gt;% 
+   ggplot( aes(type, AveragePrice) ) +
+   geom_boxplot() +
+*  coord_flip()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/horiz box ggplot-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Grouped boxplots: ggplot2
+
+- And it's a snap to do grouped boxplots when you color by factored region
+
+
+```r
+avocado %&gt;% 
+*  filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;%
+   ggplot( aes(type, AveragePrice,
+*              fill=factor(region) ) ) +
+   geom_boxplot()
+```
+---
+
+# Grouped boxplots: ggplot2
+
+- Whew! so much less work!
+
+
+```r
+avocado %&gt;% 
+*  filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;%
+   ggplot( aes(type, AveragePrice,
+*              fill=factor(region) ) ) +
+   geom_boxplot()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/grp box ggplot-1.png" width="46%" style="display: block; margin: auto;" /&gt;
+---
+class: middle
+
+# &lt;center&gt; Thanks! &lt;/center&gt;
+
+These slides can be found at &lt;a href="https://maryryan.github.io/BuildingGraphicsInR19/PRESENTATION_buildGraphicsInR19"&gt;https://maryryan.github.io/BuildingGraphicsInR19/PRESENTATION_buildGraphicsInR19#1&lt;/a&gt;
+
+&lt;!-- social media info --&gt;
+&lt;div style="position:fixed; bottom:40px; left:70px;"&gt;
+&lt;div&gt;&lt;img src="libs/Twitter-Social-Icons/Twitter_SocialIcon_Circle/Twitter_Social_Icon_Circle_Color.png" width="40"/&gt; &lt;a href="https://twitter.com/Marym_Ryan"&gt; @Marym_Ryan &lt;/a&gt;&lt;/div&gt;
+&lt;div&gt;&lt;img src="libs/GitHub-Mark/PNG/GitHub-Mark-120px-plus.png" width="40"/&gt; &lt;a href="https://github.com/maryryan"&gt; github.com/maryryan &lt;/a&gt; &lt;/div&gt;
+&lt;/div&gt;
+
+---
+class: middle
+
+
+&lt;img src="./bonusRound.jpg" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+class: middle
+
+# &lt;center&gt; Themes with ggplot2 &lt;/center&gt;
+
+---
+
+# Themes with ggplot2
+
+- You can also apply pre-set color schemes to you ggplots by using themes:
+
+- `classic` theme gets rid of the background color and grid lines
+      
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+*  theme_classic()
+```
+---
+
+# Themes with ggplot2
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+*  theme_classic()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/classic theme-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Themes with ggplot2
+
+- `bw` theme gives you white background and gray lines
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+*  theme_bw()
+```
+---
+
+# Themes with ggplot2
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+*  theme_bw()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/bw theme-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Themes with ggplot2 
+
+- `void` theme takes pretty much everything away
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+*  theme_void()
+```
+---
+
+# Themes with ggplot2 
+
+
+```r
+avocado %&gt;% 
+   filter( region %in% c("TotalUS", "LosAngeles", "SanDiego") ) %&gt;% 
+   ggplot( aes(type, AveragePrice, fill=factor(region) ) ) +
+   geom_boxplot() +
+*  theme_void()
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/void theme-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Themes with ggplot2
+
+- You can find a complete list of the themes here: https://ggplot2.tidyverse.org/reference/ggtheme.html
+---
+class:middle
+
+# &lt;center&gt; Maps with ggplot2 &lt;/center&gt;
+
+---
+
+# Maps with ggplot2
+
+- Most of this is taken from this reproducible research course by Eric C. Anderson for (NOAA/SWFSC): http://eriqande.github.io/rep-res-web/lectures/making-maps-with-R.html
+
+- The key to making maps is you either need latitude and longitude data or polygon data (in the case of base R)
+
+- First, load up USA coordinate data in a usable form using `map_data`
+
+```r
+usa &lt;- map_data("usa")
+```
+
+```
+## 
+## Attaching package: 'maps'
+```
+
+```
+## The following object is masked from 'package:purrr':
+## 
+##     map
+```
+---
+
+# Maps with ggplot2
+
+- Now, create our map using `geom_polygon`
+
+
+```r
+usa %&gt;% 
+   ggplot() +
+   geom_polygon( aes(x=long, y = lat, group = group) )
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/map-1.png" width="50%" style="display: block; margin: auto;" /&gt;
+---
+
+# Maps with ggplot2
+
+- Next, we'll make it look less squished by playing with the aspect ratio using `coord_fixed()`
+
+
+```r
+usa %&gt;% 
+   ggplot() +
+   geom_polygon( aes(x=long, y = lat, group = group)) + 
+*  coord_fixed(1.3)
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/map coord-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Maps with ggplot2
+
+- We can add some points to the map
+
+
+```r
+*labs &lt;- data.frame(
+*  long = c(-122.064873, -122.306417),
+*  lat = c(36.951968, 47.644855),
+*  stringsAsFactors = FALSE
+*) 
+
+usa %&gt;% 
+   ggplot() + 
+   geom_polygon( aes(x=long, y = lat, group = group) ) + 
+*  geom_point( data = labs, aes(x = long, y = lat), color = "black", size = 5 ) +
+*  geom_point( data = labs, aes(x = long, y = lat), color = "yellow", size = 4 ) +
+   coord_fixed(1.3)
+```
+---
+
+# Maps with ggplot2
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/map points-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Maps with ggplot2
+
+- And we can do a map with states!
+
+- First load state map data
+
+
+```r
+states &lt;- map_data("state")
+```
+
+- `color=white` will get us white state borders
+- `guides(fill=FALSE)` will block the automatic color legend
+
+
+```r
+states %&gt;% 
+   ggplot() + 
+   geom_polygon(aes(x = long, y = lat, fill = region, group = group),
+*               color = "white") +
+   coord_fixed(1.3) +
+*  guides(fill=FALSE)
+```
+---
+
+# Maps with ggplot2
+
+
+
+```r
+states %&gt;% 
+   ggplot() + 
+   geom_polygon(aes(x = long, y = lat, fill = region, group = group),
+*               color = "white") +
+   coord_fixed(1.3) +
+*  guides(fill=FALSE)
+```
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/state map-1.png" width="53%" style="display: block; margin: auto;" /&gt;
+---
+
+# Maps with ggplot2
+
+- And here we get some specific states
+
+
+```r
+west_coast &lt;- subset(states, region %in% c("california", "oregon", "washington"))
+
+west_coast %&gt;% 
+   ggplot() + 
+   geom_polygon(aes(x = long, y = lat, group = group),
+                fill = "violet", color = "white") + 
+   coord_fixed(1.3)
+```
+---
+
+# Maps with ggplot2
+
+&lt;img src="PRESENTATION_buildGraphicsInR19_files/figure-html/west coast-1.png" width="53%" style="display: block; margin: auto;" /&gt;
     </textarea>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
 "highlightStyle": "github",
 "highlightLines": true,
-"countIncrementalSlides": false
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%"
 });
 if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   window.dispatchEvent(new Event('resize'));

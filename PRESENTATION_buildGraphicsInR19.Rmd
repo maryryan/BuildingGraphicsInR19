@@ -67,6 +67,11 @@ class: title-slide2
 <div><img src="https://svgsilh.com/svg/1873373.svg" width="35"/><a href="https://www.ics.uci.edu/~marymr/"> www.ics.uci.edu/~marymr </a></div>
 </div>
 
+<!-- slide link info -->
+<div style="position:fixed; bottom:60px; right:70px;">
+<a href="http://bit.ly/nicar19-Rgraphics">http://bit.ly/nicar19-Rgraphics</a>
+</div>
+
 ---
 
 # To each their own
@@ -1050,7 +1055,7 @@ class: middle
 
 # <center> Thanks! </center>
 
-These slides can be found at <a href="https://maryryan.github.io/BuildingGraphicsInR19/PRESENTATION_buildGraphicsInR19">https://maryryan.github.io/BuildingGraphicsInR19/PRESENTATION_buildGraphicsInR19#1</a>
+These slides can be found at <a href="http://bit.ly/nicar19-Rgraphics">http://bit.ly/nicar19-Rgraphics</a>
 
 <!-- social media info -->
 <div style="position:fixed; bottom:40px; left:70px;">
